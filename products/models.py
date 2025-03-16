@@ -2,7 +2,7 @@ from django.db import models
 from django.utils.translation import gettext_lazy as _
 
 class CategoryModel(models.Model):
-    name = models.CharField(max_length=255)
+    name = models.CharField(max_length=255, verbose_name=_('name'))
 
     def __str__(self):
         return self.name
@@ -24,10 +24,10 @@ class SizeModel(models.Model):
 
 
 class ColorModel(models.Model):
-    name = models.CharField(max_length=10, null=True, blank=True)
+    name = models.CharField(max_length=10, null=True, blank=True, verbose_name=_('name'))
 
     def __str__(self):
-        return self.name
+        return self.name if self.name else "Unnamed color"
 
     class Meta:
         verbose_name = 'Color'
@@ -35,9 +35,9 @@ class ColorModel(models.Model):
 
 
 class BannerModel(models.Model):
-    image = models.ImageField(upload_to='banners/', verbose_name=_('Image'))
+    image = models.ImageField(upload_to='banners/', null=True, blank=True)
     is_active = models.BooleanField(default=True)
-    description = models.TextField()
+    description = models.TextField(verbose_name=_('description'))
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
