@@ -1,0 +1,118 @@
+{% extends 'base.html' %} {% block title %}ToyLand | Shopping Cart{% endblock %}
+{% block breadcrumb %}
+<div class="breadcrumb">
+  <a href="{% url 'home' %}">Home</a> &gt;
+  <span>Shopping Cart</span>
+</div>
+{% endblock %} {% block content %}
+<!-- Cart Section -->
+<section class="cart-section">
+  <h1 class="page-title">Shopping Cart</h1>
+  <div class="cart-container">
+    <div class="cart-items">
+      <div class="cart-header">
+        <span class="header-product">Product</span>
+        <span class="header-price">Price</span>
+        <span class="header-quantity">Quantity</span>
+        <span class="header-total">Total</span>
+      </div>
+
+      {% if cart_items %} {% for item in cart_items %}
+      <div class="cart-item">
+        <div class="item-product">
+          {% if item.product.image %}
+          <img
+            src="{{ item.product.image.url }}"
+            alt="{{ item.product.name }}"
+          />
+          {% else %}
+          <img
+            src="{% static 'images/placeholder.jpg' %}"
+            alt="{{ item.product.name }}"
+          />
+          {% endif %}
+          <div class="item-details">
+            <h3>{{ item.product.name }}</h3>
+            <p class="item-meta">SKU: {{ item.product.sku }}</p>
+          </div>
+        </div>
+        <div class="item-price">${{ item.product.price }}</div>
+        <div class="item-quantity">
+          <form
+            method="post"
+            action="{% url 'update_cart' item.id %}"
+            class="quantity-form"
+          >
+            {% csrf_token %}
+            <div class="quantity-selector">
+              <button type="button" class="quantity-btn minus">-</button>
+              <input
+                type="number"
+                name="quantity"
+                value="{{ item.quantity }}"
+                min="1"
+                max="10"
+                onchange="this.form.submit()"
+              />
+              <button type="button" class="quantity-btn plus">+</button>
+            </div>
+          </form>
+        </div>
+        <div class="item-total">${{ item.total_price }}</div>
+        <form method="post" action="{% url 'remove_from_cart' item.id %}">
+          {% csrf_token %}
+          <button type="submit" class="remove-item">
+            <i class="fas fa-times"></i>
+          </button>
+        </form>
+      </div>
+      {% endfor %} {% else %}
+      <div class="empty-cart">
+        <p>Your cart is empty.</p>
+        <a href="{% url 'products' %}" class="btn secondary-btn"
+          >Continue Shopping</a
+        >
+      </div>
+      {% endif %} {% if cart_items %}
+      <div class="cart-actions">
+        <form method="post" action="{% url 'apply_coupon' %}" class="coupon">
+          {% csrf_token %}
+          <input type="text" name="coupon_code" placeholder="Coupon code" />
+          <button type="submit" class="btn secondary-btn">Apply Coupon</button>
+        </form>
+        <a href="{% url 'products' %}" class="btn secondary-btn"
+          >Continue Shopping</a
+        >
+      </div>
+      {% endif %}
+    </div>
+
+    {% if cart_items %}
+    <div class="cart-summary">
+      <h3>Cart Summary</h3>
+      <div class="summary-row">
+        <span>Subtotal</span>
+        <span>${{ cart_subtotal }}</span>
+      </div>
+      <div class="summary-row">
+        <span>Shipping</span>
+        <span>${{ shipping_cost }}</span>
+      </div>
+      {% if discount_amount %}
+      <div class="summary-row">
+        <span>Discount</span>
+        <span>-${{ discount_amount }}</span>
+      </div>
+      {% endif %}
+      <div class="summary-row total">
+        <span>Total</span>
+        <span>${{ cart_total }}</span>
+      </div>
+      <a href="{% url 'checkout' %}" class="btn primary-btn checkout-btn"
+        >Proceed to Checkout</a
+      >
+    </div>
+    {% endif %}
+  </div>
+</section>
+{% endblock %}

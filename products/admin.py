@@ -1,8 +1,7 @@
 from django.contrib import admin
-from products.models import CategoryModel, ColorModel, SizeModel, ProductModel, BannerModel
+from products.models import CategoryModel, ColorModel, SizeModel, ProductModel, BannerModel, ImageModel
 from modeltranslation.translator import translator, TranslationOptions
 from modeltranslation.admin import TranslationAdmin
-
 
 class MyTranslationAdmin(TranslationAdmin):
     class Media:
@@ -44,8 +43,13 @@ class SizeModelAdmin(admin.ModelAdmin):
     list_filter = ['name']
 
 
+class ImageModelAdmin(admin.TabularInline):
+    model = ImageModel
+    extra = 1
+    
 @admin.register(ProductModel)
 class ProductModelAdmin(MyTranslationAdmin):
     list_display = ['id', 'name', 'get_price', 'category', 'seller']
     search_fields = ['name', 'discount', 'category']
     list_filter = ['name', 'discount', 'category']
+    inlines = [ImageModelAdmin]

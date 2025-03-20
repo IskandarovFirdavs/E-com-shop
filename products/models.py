@@ -80,3 +80,27 @@ class ProductModel(models.Model):
 
     def is_discounted(self):
         return self.discount > 0
+
+
+class ImageModel(models.Model):
+    product = models.ForeignKey(ProductModel, on_delete=models.CASCADE, related_name='images')
+    image = models.ImageField(upload_to='products/', verbose_name=_('image'))
+
+    def __str__(self):
+        return self.image.url
+
+    class Meta:
+        verbose_name = 'Image'
+        verbose_name_plural = 'Images'
+
+
+
+class CommentModel(models.Model):
+    product = models.ForeignKey(ProductModel, on_delete=models.CASCADE, related_name='comments')
+    name = models.CharField(max_length=100)
+    comment = models.TextField()
+    created_at = models.DateTimeField(auto_now_add=True)
+    
+    def __str__(self):
+        return f'Comment {self.comment} by {self.name}'
+

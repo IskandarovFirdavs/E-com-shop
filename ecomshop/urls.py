@@ -10,6 +10,7 @@ urlpatterns = []
 urlpatterns += i18n_patterns(
     path('admin/', admin.site.urls),
     path('users/', include('users.urls', namespace='users')),
+    path('contact/', include('contacts.urls', namespace='contact')),
     path('', include('products.urls', namespace='products')),
 )
 

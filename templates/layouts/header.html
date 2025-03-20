@@ -1,7 +1,7 @@
 {% url 'products:list' as home_url %}
 {% url 'products:shop' as shop_url %}
 {% url 'products:about' as about_url %}
-{% url 'products:contact' as contact_url %}
+{% url 'contact:contact' as contact_url %}
 
 <nav class="navbar navbar-expand-lg bg-dark navbar-light d-none d-lg-block" id="templatemo_nav_top">
     <div class="container text-light">
@@ -64,7 +64,7 @@
                     <li class="nav-item">
                         <a class="nav-link"
                            {% if request.path == contact_url %}style="border-bottom: 1px solid green;" {% endif %}
-                           href="{% url 'products:contact' %}">Contact</a>
+                           href="{% url 'contact:contact' %}">Contact</a>
                     </li>
                 </ul>
             </div>

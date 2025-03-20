@@ -1,6 +1,7 @@
 from django.views.generic import TemplateView, ListView, DetailView
-
 from products.models import ProductModel, BannerModel
+from products.forms import CommentForm
+from django.shortcuts import redirect
 
 
 class HomeListView(ListView):
@@ -19,8 +20,6 @@ class AboutTemplateView(TemplateView):
     template_name = 'about.html'
 
 
-class ContactTemplateView(TemplateView):
-    template_name = 'contact.html'
 
 
 class ShopTemplateView(ListView):
@@ -45,9 +44,25 @@ class ProductDetailView(DetailView):
     context_object_name = 'product'
 
     def get_context_data(self, **kwargs):
-        context = super(ProductDetailView, self).get_context_data(**kwargs)
+        context = super().get_context_data(**kwargs)
         context['related'] = self.object.category.products.exclude(pk=self.object.pk)[:4]
+        context['comment_form'] = CommentForm()
         return context
+
+    def post(self, request, *args, **kwargs):
+        self.object = self.get_object()
+        context = self.get_context_data(object=self.object)
+        form = CommentForm(request.POST)
+        
+        if form.is_valid():
+            comment = form.save(commit=False)
+            comment.product = self.object
+            comment.save()
+            return redirect('products:detail', pk=self.object.pk)   
+
+        context['comment_form'] = form
+        return self.render_to_response(context)
+
     
 
 
